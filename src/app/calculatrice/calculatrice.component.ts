@@ -15,11 +15,8 @@ export class CalculatriceComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  calcul(): void {}
-
   addNumber(elmt: string): void {
     this.temporaryNumber += elmt;
-    console.log(this.temporaryNumber);
   }
 
   validate(): void {
@@ -28,7 +25,6 @@ export class CalculatriceComponent implements OnInit {
   }
 
   operation(symbol: string): void {
-    console.log(symbol);
     if (this.numbers.length < 2) {
       return;
     }
@@ -77,5 +73,12 @@ export class CalculatriceComponent implements OnInit {
 
   comma(): void {
     this.temporaryNumber += '.';
+  }
+
+  deleteOne(): void {
+    this.temporaryNumber = this.temporaryNumber.slice(
+      0,
+      this.temporaryNumber.length - 1
+    );
   }
 }
