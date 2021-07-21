@@ -7,8 +7,15 @@ input {
 
 #calculatrice {
   width: 300px;
-  height: 300px;
+  height: auto;
   border-radius: 5px;
   border: 2px solid black;
   padding: 10px;
+}
+
+.tools-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 15px;
 }
