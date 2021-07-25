@@ -4,17 +4,17 @@ import { CalculatriceService } from './calculatrice.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AdditionService {
+export class SoustractService {
   constructor(private calculatriceService: CalculatriceService) {}
 
-  add(): void {
+  soustract(): void {
     const numbers = this.calculatriceService.getNumbers();
 
     if (numbers.length < 2) {
-      return undefined;
+      return;
     }
 
-    const result = numbers[numbers.length - 1] + numbers[numbers.length - 2];
+    const result = numbers[numbers.length - 1] - numbers[numbers.length - 2];
 
     this.calculatriceService.addOperationNumber(result);
     this.calculatriceService.pop();

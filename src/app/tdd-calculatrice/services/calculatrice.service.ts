@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { throwStatement } from '@babel/types';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,22 @@ export class CalculatriceService {
       0,
       this.temporaryNumber.length - 1
     );
+  }
+
+  addOperationNumber(elmt: number): void {
+    const numberIndex = this.numbers.length - 2;
+    this.numbers[numberIndex] = elmt;
+  }
+
+  pop(): void {
+    this.numbers.pop();
+  }
+
+  addOtherNumber(otherNumber: number): void {
+    this.numbers.push(otherNumber);
+  }
+
+  addComma(): void {
+    this.temporaryNumber += '.';
   }
 }

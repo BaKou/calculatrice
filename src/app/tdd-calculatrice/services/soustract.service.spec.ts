@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DiviseService } from './divise.service';
+import { SoustractService } from './soustract.service';
 import { CalculatriceService } from './calculatrice.service';
 
-describe('DiviseService', () => {
-  let service: DiviseService;
+describe('SoustractService', () => {
+  let service: SoustractService;
 
   const calculatriceServiceMock = {
     pop: jest.fn(),
@@ -21,7 +21,7 @@ describe('DiviseService', () => {
         }
       ]
     });
-    service = TestBed.inject(DiviseService);
+    service = TestBed.inject(SoustractService);
   });
 
   it('should be created', () => {
@@ -32,12 +32,12 @@ describe('DiviseService', () => {
     //GIVEN
     jest
       .spyOn(calculatriceServiceMock, 'getNumbers')
-      .mockReturnValueOnce([4, 2]);
+      .mockReturnValueOnce([2, 4]);
     //WHEN
-    service.divise();
+    service.soustract();
 
     //THEN
-    expect(calculatriceServiceMock.addOperationNumber).toBeCalledWith(0.5);
+    expect(calculatriceServiceMock.addOperationNumber).toBeCalledWith(2);
     expect(calculatriceServiceMock.pop).toBeCalled();
   });
 });

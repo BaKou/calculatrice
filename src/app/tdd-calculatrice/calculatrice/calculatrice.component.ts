@@ -35,4 +35,12 @@ export class CalculatriceTddComponent implements OnInit {
     this.calculatriceService.deleteOne();
     this.refreshNumbers();
   }
+
+  reset(): void {
+    this.calculatriceService.clearNumbers();
+  }
+
+  comma(): void {
+    this.calculatriceService.addComma();
+  }
 }

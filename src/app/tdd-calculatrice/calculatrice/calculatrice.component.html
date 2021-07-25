@@ -16,22 +16,22 @@
       <app-button [text]="'4'" (newItemEvent)="addNumber($event)"></app-button>
       <app-button [text]="'5'" (newItemEvent)="addNumber($event)"></app-button>
       <app-button [text]="'6'" (newItemEvent)="addNumber($event)"></app-button>
-      <!-- <app-button [text]="'-'" (newItemEvent)="operation($event)"></app-button>-->
+      <app-button [text]="'-'" appSoustrat></app-button>
     </div>
     <div class="tools-line">
       <app-button [text]="'7'" (newItemEvent)="addNumber($event)"></app-button>
       <app-button [text]="'8'" (newItemEvent)="addNumber($event)"></app-button>
       <app-button [text]="'9'" (newItemEvent)="addNumber($event)"></app-button>
-      <!-- <app-button [text]="'x'" (newItemEvent)="operation($event)"></app-button>-->
+      <app-button [text]="'x'" appMultiply></app-button>
     </div>
     <div class="tools-line">
       <app-button [text]="'0'" (newItemEvent)="addNumber($event)"></app-button>
       <app-button [text]="'enter'" (newItemEvent)="validate()"></app-button>
-      <!-- <app-button [text]="'%'" (newItemEvent)="operation($event)"></app-button>
-        <app-button [text]="'c'" (newItemEvent)="reset()"></app-button>-->
+      <app-button [text]="'%'" appDivise></app-button>
+      <app-button [text]="'c'" (newItemEvent)="reset()"></app-button>
     </div>
     <div class="tools-line">
-      <!--<app-button [text]="','" (newItemEvent)="comma()"></app-button>-->
+      <app-button [text]="','" (newItemEvent)="comma()"></app-button>
       <app-button [text]="'<-'" (newItemEvent)="deleteOne()"></app-button>
     </div>
   </div>

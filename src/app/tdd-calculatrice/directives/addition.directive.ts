@@ -9,7 +9,6 @@ export class AdditionDirective {
 
   @HostListener('click', ['$event'])
   click(): void {
-    console.log('click ok');
-    //this.additionService.add();
+    this.additionService.add();
   }
 }

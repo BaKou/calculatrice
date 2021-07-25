@@ -7,7 +7,7 @@ import { CalculatriceComponent } from './calculatrice/calculatrice.component';
 import { ButtonComponent } from './shared/button/button.component';
 import { LogDirective } from './tdd-calculatrice/directives/log.directive';
 import { AdditionDirective } from './tdd-calculatrice/directives/addition.directive';
-import { MultiplicateDirective } from './tdd-calculatrice/directives/multiplicate.directive';
+import { MultiplyDirective } from './tdd-calculatrice/directives/multiply.directive';
 import { DiviseDirective } from './tdd-calculatrice/directives/divise.directive';
 import { SoustratDirective } from './tdd-calculatrice/directives/soustrat.directive';
 import { CalculatriceTddComponent } from './tdd-calculatrice/calculatrice/calculatrice.component';
@@ -20,7 +20,7 @@ import { CalculatriceTddComponent } from './tdd-calculatrice/calculatrice/calcul
     ButtonComponent,
     LogDirective,
     AdditionDirective,
-    MultiplicateDirective,
+    MultiplyDirective,
     DiviseDirective,
     SoustratDirective
   ],
