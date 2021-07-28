@@ -41,4 +41,16 @@ describe('AdditionService', () => {
     expect(calculatriceServiceMock.addOperationNumber).toBeCalledWith(3);
     expect(calculatriceServiceMock.pop).toBeCalled();
   });
+
+  it('should do nothing if threre are only one number', () => {
+    //GIVEN
+    jest.spyOn(calculatriceServiceMock, 'getNumbers').mockReturnValueOnce([1]);
+
+    //WHEN
+    service.add();
+
+    //THEN
+    expect(calculatriceServiceMock.addOperationNumber).not.toBeCalled();
+    expect(calculatriceServiceMock.pop).not.toBeCalled();
+  });
 });

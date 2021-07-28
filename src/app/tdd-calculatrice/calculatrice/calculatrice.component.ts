@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CalculatriceService } from '../services/calculatrice.service';
+import { NumbersService } from '../services/numbers.service';
+import { TemporaryNumberService } from '../services/temporary-number.service';
 
 @Component({
   selector: 'app-calculatrice-tdd',
@@ -10,37 +12,36 @@ export class CalculatriceTddComponent implements OnInit {
   numbers: number[] = [];
   temporaryNumber = '';
 
-  constructor(private calculatriceService: CalculatriceService) {}
+  constructor(
+    private numbersService: NumbersService,
+    private temporaryNumberService: TemporaryNumberService
+  ) {}
 
   ngOnInit(): void {
-    this.refreshNumbers();
-  }
-
-  refreshNumbers(): void {
-    this.numbers = this.calculatriceService.getNumbers();
-    this.temporaryNumber = this.calculatriceService.getTemporaryNumber();
+    this.numbersService.numbers.subscribe(numbers => (this.numbers = numbers));
+    this.temporaryNumberService.temporaryNumber.subscribe(
+      temporaryNumber => (this.temporaryNumber = temporaryNumber)
+    );
   }
 
   addNumber(elmt: string): void {
-    this.calculatriceService.addTemporaryNumber(elmt);
-    this.refreshNumbers();
+    this.temporaryNumberService.addTemporaryNumber(elmt);
   }
 
   validate(): void {
-    this.calculatriceService.addNumber();
-    this.refreshNumbers();
+    this.numbersService.addNumber();
   }
 
   deleteOne(): void {
-    this.calculatriceService.deleteOne();
-    this.refreshNumbers();
+    this.temporaryNumberService.deleteOne();
   }
 
   reset(): void {
-    this.calculatriceService.clearNumbers();
+    this.numbersService.clear();
+    this.temporaryNumberService.clear();
   }
 
   comma(): void {
-    this.calculatriceService.addComma();
+    this.temporaryNumberService.addComma();
   }
 }
