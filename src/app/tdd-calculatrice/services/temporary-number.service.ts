@@ -30,9 +30,8 @@ export class TemporaryNumberService {
 
   addComma(): void {
     let currentTemporaryNumber = this.temporaryNumber.value;
-    console.log(currentTemporaryNumber.match(/([\s.]\s*world\s*.?)/i));
 
-    if (!currentTemporaryNumber.match(/([\s.]\s*world\s*.?)/i)) {
+    if (currentTemporaryNumber.match(/[.\/]/g) === null) {
       this.temporaryNumber.next(currentTemporaryNumber);
       currentTemporaryNumber += '.';
       this.temporaryNumber.next(currentTemporaryNumber);
