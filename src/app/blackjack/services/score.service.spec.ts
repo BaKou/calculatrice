@@ -22,6 +22,21 @@ describe('ScoreService', () => {
     }
   ];
 
+  const mockBankCards = [
+    {
+      "image": "https://deckofcardsapi.com/static/img/KH.png",
+      "value": "KING",
+      "suit": "HEARTS",
+      "code": "KH"
+    },
+    {
+      "image": "https://deckofcardsapi.com/static/img/8C.png",
+      "value": "2",
+      "suit": "CLUBS",
+      "code": "2C"
+    }
+  ];
+
   let cardsServiceMock = {
     getPlayerCards: jest.fn(),
     getBankCards: jest.fn()
@@ -49,7 +64,7 @@ describe('ScoreService', () => {
 
     service.getRank();
 
-    service._playerRank$.subscribe(rank => {
+    service.playerRank$.subscribe(rank => {
       expect(rank).toBe("JEDI")
     })
   });
@@ -64,5 +79,41 @@ describe('ScoreService', () => {
     service.playerScore$.subscribe(score => {
       expect(score).toEqual(18)
     })
+  });
+
+  it('should find the winner at the end of the game player win', () => {
+
+    jest.spyOn(cardsServiceMock, 'getPlayerCards').mockReturnValueOnce(of(mockPlayerCards))
+    jest.spyOn(cardsServiceMock, 'getBankCards').mockReturnValueOnce(of(mockBankCards))
+    service.getScore('bank');
+    service.getScore('player');
+
+    const result = service.findWinner();
+
+    expect(result).toBe('Vous avez GAGNE');
+  });
+
+  it('should find the winner at the end of the game player lose', () => {
+
+    jest.spyOn(cardsServiceMock, 'getPlayerCards').mockReturnValueOnce(of(mockBankCards))
+    jest.spyOn(cardsServiceMock, 'getBankCards').mockReturnValueOnce(of(mockPlayerCards))
+    service.getScore('bank');
+    service.getScore('player');
+
+    const result = service.findWinner();
+
+    expect(result).toBe('Vous avez PERDU');
+  });
+
+  it('should find the winner at the end of the game tie', () => {
+
+    jest.spyOn(cardsServiceMock, 'getPlayerCards').mockReturnValueOnce(of(mockPlayerCards))
+    jest.spyOn(cardsServiceMock, 'getBankCards').mockReturnValueOnce(of(mockPlayerCards))
+    service.getScore('bank');
+    service.getScore('player');
+
+    const result = service.findWinner();
+
+    expect(result).toBe('EGALITE');
   });
 });

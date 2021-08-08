@@ -1,1 +1,8 @@
-<p>player works!</p>
+<div id="card-list">
+  <ul>
+    <li *ngFor="let card of playerCards" class="card">
+      <img [src]="card.image" [alt]="card.code" />
+    </li>
+  </ul>
+</div>
+<div id="score" *ngIf="score > 0">{{ score }} {{ rank }}</div>

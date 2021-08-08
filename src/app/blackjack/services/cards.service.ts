@@ -6,6 +6,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { CardResponseType } from '../types/card-response.type';
 import { switchMap, tap, map } from 'rxjs/operators';
 import { CardType } from '../types/card.type';
+import { ScoreService } from './score.service';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class CardsService {
   }
 
   getCard(numberOfCards: number): Observable<CardResponseType> {
-    return this.http.get<CardResponseType>(`${environment.apiUrl}/deck/${this._deckId}/draw/?${numberOfCards}`);
+    return this.http.get<CardResponseType>(`${environment.apiUrl}/deck/${this._deckId}/draw/?count=${numberOfCards}`);
   }
 
   drawCard(player: string): void {
@@ -63,7 +64,9 @@ export class CardsService {
     this.getDeck().pipe(
       map(newDeck => this._deckId = newDeck.deck_id),
       tap(() => this.getCard(2).subscribe(cardsResponse => this._bankCards.next(cardsResponse.cards))),
-      tap(() => this.getCard(2).subscribe(cardsResponse => this._playerCards.next(cardsResponse.cards))),
+      tap(() => this.getCard(2).subscribe(cardsResponse => {
+        this._playerCards.next(cardsResponse.cards);
+      })),
     ).subscribe(ini => this._initialized = true);
   }
 }

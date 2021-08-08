@@ -1,8 +1,16 @@
 <h1> BLACKJACK</h1>
 <div id="table">
-    <div id="bank-side"></div>
-    <div id="user-side"></div>
+    <div id="bank-side">
+        <app-player [playerCards]="bankCards$ | async" [score]="bankScore$ | async"></app-player>
+    </div>
+    <div id="user-side">
+        <app-player [playerCards]="playerCards$ | async" [score]="playerScore$ | async" [rank]="playerRank$ | async">
+        </app-player>
+    </div>
 </div>
 <div>
+    {{ winner }}
     <button (click)="startGame()"> JOUER </button>
+    <button (click)="draw()"> TIRER UNE CARTE </button>
+    <button (click)="endGame()"> FIN </button>
 </div>

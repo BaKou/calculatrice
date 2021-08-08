@@ -14,9 +14,21 @@ export class ScoreService {
   bankScore$ = this._bankScore.asObservable();
   temporaryScore = 0;
   private _playerRank = new BehaviorSubject<string>('');
-  _playerRank$ = this._playerRank.asObservable();
+  playerRank$ = this._playerRank.asObservable();
 
   constructor(private cardsService: CardsService) { }
+
+  getPlayerScore() {
+    return this.playerScore$;
+  }
+
+  getPlayerRank() {
+    return this.playerRank$;
+  }
+
+  getBankScore() {
+    return this.bankScore$;
+  }
 
 
   getRank(): void {
@@ -29,6 +41,8 @@ export class ScoreService {
         this._playerRank.next("JEDI");
       } else if (score === 21) {
         this._playerRank.next("MASTER");
+      } else if (score > 21) {
+        this._playerRank.next("PERDU");
       }
     })
   }
@@ -50,12 +64,25 @@ export class ScoreService {
   calculateScore(cards: CardType[], player: BehaviorSubject<number>): void {
     this.temporaryScore = 0;
     cards.forEach(card => {
-      if (parseFloat(card.value) != NaN) {
+      if (Number.isInteger(parseInt(card.value))) {
         this.temporaryScore += parseFloat(card.value);
       } else {
         this.temporaryScore += 10
       }
     });
     player.next(this.temporaryScore);
+  }
+
+  findWinner(): string {
+    const bankScore = this._bankScore.value;
+    const playerScore = this._playerScore.value;
+
+    if (playerScore > bankScore && playerScore < 22 || bankScore > 21 && playerScore <= 21) {
+      return 'Vous avez GAGNE';
+    } else if (playerScore === bankScore) {
+      return 'EGALITE';
+    } else {
+      return 'Vous avez PERDU';
+    }
   }
 }
