@@ -14,6 +14,7 @@ import { SoustratDirective } from './tdd-calculatrice/directives/soustrat.direct
 import { CalculatriceTddComponent } from './tdd-calculatrice/calculatrice/calculatrice.component';
 import { Calculatrice2Component } from './calculatrice2/calculatrice2/calculatrice2.component';
 import { TableComponent } from './blackjack/table/table.component';
+import { PlayerComponent } from './blackjack/player/player.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { TableComponent } from './blackjack/table/table.component';
     DiviseDirective,
     SoustratDirective,
     Calculatrice2Component,
-    TableComponent
+    TableComponent,
+    PlayerComponent
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],

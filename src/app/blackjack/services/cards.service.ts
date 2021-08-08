@@ -21,7 +21,7 @@ export class CardsService {
 
   constructor(private http: HttpClient) { }
 
-  getUsercards(): Observable<CardType[]> {
+  getPlayerCards(): Observable<CardType[]> {
     return this.playerCards$;
   }
 
