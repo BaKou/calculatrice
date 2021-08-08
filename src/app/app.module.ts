@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +12,8 @@ import { MultiplyDirective } from './tdd-calculatrice/directives/multiply.direct
 import { DiviseDirective } from './tdd-calculatrice/directives/divise.directive';
 import { SoustratDirective } from './tdd-calculatrice/directives/soustrat.directive';
 import { CalculatriceTddComponent } from './tdd-calculatrice/calculatrice/calculatrice.component';
+import { Calculatrice2Component } from './calculatrice2/calculatrice2/calculatrice2.component';
+import { TableComponent } from './blackjack/table/table.component';
 
 @NgModule({
   declarations: [
@@ -22,10 +25,12 @@ import { CalculatriceTddComponent } from './tdd-calculatrice/calculatrice/calcul
     AdditionDirective,
     MultiplyDirective,
     DiviseDirective,
-    SoustratDirective
+    SoustratDirective,
+    Calculatrice2Component,
+    TableComponent
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
