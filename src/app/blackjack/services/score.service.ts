@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CardType } from '../types/card.type';
 import { CardsService } from './cards.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScoreService {
-
   private _playerScore = new BehaviorSubject<number>(0);
   playerScore$ = this._playerScore.asObservable();
   private _bankScore = new BehaviorSubject<number>(0);
@@ -16,46 +15,43 @@ export class ScoreService {
   private _playerRank = new BehaviorSubject<string>('');
   playerRank$ = this._playerRank.asObservable();
 
-  constructor(private cardsService: CardsService) { }
+  constructor(private cardsService: CardsService) {}
 
-  getPlayerScore() {
+  getPlayerScore(): Observable<number> {
     return this.playerScore$;
   }
 
-  getPlayerRank() {
+  getPlayerRank(): Observable<string> {
     return this.playerRank$;
   }
 
-  getBankScore() {
+  getBankScore(): Observable<number> {
     return this.bankScore$;
   }
 
-
   getRank(): void {
-    this.playerScore$.subscribe(score => {
+    this.playerScore$.subscribe((score) => {
       if (score < 10) {
-        this._playerRank.next("POULAIN");
+        this._playerRank.next('POULAIN');
       } else if (score > 10 && score < 17) {
-        this._playerRank.next("ETRE HUMAIN");
+        this._playerRank.next('ETRE HUMAIN');
       } else if (score > 16 && score < 21) {
-        this._playerRank.next("JEDI");
+        this._playerRank.next('JEDI');
       } else if (score === 21) {
-        this._playerRank.next("MASTER");
+        this._playerRank.next('MASTER');
       } else if (score > 21) {
-        this._playerRank.next("PERDU");
+        this._playerRank.next('PERDU');
       }
-    })
+    });
   }
 
-
   getScore(player: string): void {
-
-    if (player === "bank") {
-      this.cardsService.getBankCards().subscribe(cards => {
+    if (player === 'bank') {
+      this.cardsService.getBankCards().subscribe((cards) => {
         this.calculateScore(cards, this._bankScore);
-      })
+      });
     } else {
-      this.cardsService.getPlayerCards().subscribe(cards => {
+      this.cardsService.getPlayerCards().subscribe((cards) => {
         this.calculateScore(cards, this._playerScore);
       });
     }
@@ -63,11 +59,11 @@ export class ScoreService {
 
   calculateScore(cards: CardType[], player: BehaviorSubject<number>): void {
     this.temporaryScore = 0;
-    cards.forEach(card => {
-      if (Number.isInteger(parseInt(card.value))) {
+    cards.forEach((card) => {
+      if (Number.isInteger(parseInt(card.value, 10))) {
         this.temporaryScore += parseFloat(card.value);
       } else {
-        this.temporaryScore += 10
+        this.temporaryScore += 10;
       }
     });
     player.next(this.temporaryScore);
@@ -77,7 +73,10 @@ export class ScoreService {
     const bankScore = this._bankScore.value;
     const playerScore = this._playerScore.value;
 
-    if (playerScore > bankScore && playerScore < 22 || bankScore > 21 && playerScore <= 21) {
+    if (
+      (playerScore > bankScore && playerScore < 22) ||
+      (bankScore > 21 && playerScore <= 21)
+    ) {
       return 'Vous avez GAGNE';
     } else if (playerScore === bankScore) {
       return 'EGALITE';
