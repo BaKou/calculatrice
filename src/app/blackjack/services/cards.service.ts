@@ -14,71 +14,55 @@ import { ScoreService } from './score.service';
 export class CardsService {
   private _deckId = '';
   private _playerCards = new BehaviorSubject<CardType[]>([]);
-  playerCards$ = this._playerCards.asObservable();
   private _bankCards = new BehaviorSubject<CardType[]>([]);
-  bankCards$ = this._bankCards.asObservable();
-  private _initialized = false;
+  public readonly bankCards$ = this._bankCards.asObservable();
+  public readonly playerCards$: Observable<CardType[]> =
+    this._playerCards.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  getPlayerCards(): Observable<CardType[]> {
+  public getPlayerCards(): Observable<CardType[]> {
     return this.playerCards$;
   }
 
-  getBankCards(): Observable<CardType[]> {
+  public getBankCards(): Observable<CardType[]> {
     return this.bankCards$;
   }
 
-  get initialized(): Observable<boolean> {
-    return of(this._initialized);
-  }
-
-  getDeck(): Observable<DeckResponseType> {
+  private getDeck(): Observable<DeckResponseType> {
     return this.http.get<DeckResponseType>(
       `${environment.apiUrl}/deck/new/shuffle/?deck_count=1`
     );
   }
 
-  getCard(numberOfCards: number): Observable<CardResponseType> {
+  private getCard(numberOfCards: number): Observable<CardResponseType> {
     return this.http.get<CardResponseType>(
       `${environment.apiUrl}/deck/${this._deckId}/draw/?count=${numberOfCards}`
     );
   }
 
-  drawCard(player: string): void {
-    this.getCard(1).subscribe((cardResponse) => {
-      if (player === 'bank') {
-        this.addCard(cardResponse.cards[0], this._bankCards);
-      } else {
-        this.addCard(cardResponse.cards[0], this._playerCards);
-      }
-    });
-  }
-
-  addCard(cards: CardType, userCard: BehaviorSubject<CardType[]>): void {
-    const userDeck = userCard.value;
-    userDeck.push(cards);
-    userCard.next(userDeck);
-  }
-
-  startGame(): void {
+  public initializeGame(): void {
     this._playerCards.next([]);
     this._bankCards.next([]);
 
-    this.getDeck()
-      .pipe(
-        map((newDeck) => (this._deckId = newDeck.deck_id)),
-        tap(() =>
-          this.getCard(2).subscribe((cardsResponse) =>
-            this._bankCards.next(cardsResponse.cards)
-          )
-        ),
-        tap(() =>
-          this.getCard(2).subscribe((cardsResponse) => {
-            this._playerCards.next(cardsResponse.cards);
-          })
-        )
-      )
-      .subscribe((ini) => (this._initialized = true));
+    this.getDeck().subscribe((deckResponse) => {
+      this._deckId = deckResponse.deck_id;
+
+      this.getCard(2).subscribe((cardResponse) =>
+        this._playerCards.next(cardResponse.cards)
+      );
+
+      this.getCard(2).subscribe((cardResponse) =>
+        this._bankCards.next(cardResponse.cards)
+      );
+    });
+  }
+
+  public drawCard(): void {
+    this.getCard(1).subscribe((cardResponse) => {
+      const userDeck = this._playerCards.value;
+      userDeck.push(cardResponse.cards[0]);
+      this._playerCards.next(userDeck);
+    });
   }
 }

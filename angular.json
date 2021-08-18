@@ -77,7 +77,11 @@
             "browserTarget": "calculatrice:build"
           }
         },
-        "test": {},
+        "test": {
+          "options": {
+            "codeCoverage": true
+          }
+        },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {

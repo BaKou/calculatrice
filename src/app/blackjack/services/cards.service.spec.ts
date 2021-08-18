@@ -1,4 +1,10 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import {
+  fakeAsync,
+  flush,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import {
   HttpClientTestingModule,
   HttpTestingController,
@@ -46,6 +52,27 @@ describe('CardsService', () => {
     remaining: 47,
   };
 
+  const mockPLayerCards = [
+    {
+      image: 'https://deckofcardsapi.com/static/img/KH.png',
+      value: 'KING',
+      suit: 'HEARTS',
+      code: 'KH',
+    },
+    {
+      image: 'https://deckofcardsapi.com/static/img/8C.png',
+      value: '8',
+      suit: 'CLUBS',
+      code: '8C',
+    },
+    {
+      image: 'https://deckofcardsapi.com/static/img/KH.png',
+      value: 'KING',
+      suit: 'HEARTS',
+      code: 'KH',
+    },
+  ];
+
   const mockDeckResponse = {
     success: true,
     deck_id: deckId,
@@ -65,65 +92,71 @@ describe('CardsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should reset player and bank card when start a new game', (done) => {
-    service.startGame();
-
-    service.playerCards$.subscribe((playerCard) => {
-      expect(playerCard).toEqual([]);
-    });
-    service.bankCards$.subscribe((bankCard) => {
-      expect(bankCard).toEqual([]);
-    });
-    done();
-  });
-
-  it('should initialise the game and give player and bank card', (done) => {
-    const deckSpy = jest.spyOn(service, 'getDeck');
-    const cardSpy = jest.spyOn(service, 'getCard');
-
-    service.startGame();
+  it('should reset player and bank cards and provide two cards when a game is initialize', (done) => {
+    service.initializeGame();
     httpController
       .expectOne(
         `https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`
       )
       .flush(mockDeckResponse);
-
-    expect(deckSpy).toBeCalled();
-
-    httpController.match(
-      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?2`
+    const request = httpController.match(
+      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=2`
     );
 
-    expect(cardSpy).toBeCalledTimes(2);
+    request[0].flush(mockCardResponse);
+    request[1].flush(mockCardResponse);
 
-    service.bankCards$.subscribe((cards) =>
-      expect(cards).toStrictEqual(mockCardResponse.cards)
-    );
-    service.initialized.subscribe((ini) => expect(ini).toBe(true));
-    done();
+    service.playerCards$.subscribe((cards) => {
+      expect(cards).toStrictEqual(mockCardResponse.cards);
+    });
+
+    service.bankCards$.subscribe((cards) => {
+      expect(cards).toStrictEqual(mockCardResponse.cards);
+      done();
+    });
   });
 
-  it('should get one card and update player card when player draw during the game', async () => {
-    service.startGame();
+  it('should reset player and bank cards when a game is reinitialized after playing', () => {
+    service.initializeGame();
+
+    service.playerCards$.subscribe((cards) => {
+      expect(cards).toStrictEqual([]);
+    });
+
+    service.bankCards$.subscribe((cards) => {
+      expect(cards).toStrictEqual([]);
+    });
+  });
+
+  it('should get a new deck when game initialized', async () => {
+    service.initializeGame();
+    httpController.expectOne(
+      'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1'
+    );
+  });
+
+  it('should get one card and update player card when player draw during the game', fakeAsync(() => {
+    service.initializeGame();
     httpController
       .expectOne(
         `https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`
       )
       .flush(mockDeckResponse);
-    const cardSpy = jest.spyOn(service, 'getCard');
+    const request = httpController.match(
+      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=2`
+    );
+    request[0].flush(mockCardResponse);
 
-    service.drawCard('player');
+    service.drawCard();
+    const requestDraw = httpController.expectOne(
+      `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
+    );
+    requestDraw.flush(mockCardResponseTwo);
 
-    expect(cardSpy).toBeCalled();
-    httpController
-      .expectOne(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?1`)
-      .flush(mockCardResponseTwo);
-
-    service.playerCards$.subscribe((bc) => {
-      expect(bc).toEqual(mockCardResponse.cards);
+    service.playerCards$.subscribe((cards) => {
+      expect(cards).toStrictEqual(mockPLayerCards);
     });
-    service.bankCards$.subscribe((bc) => {
-      expect(bc).toEqual([]);
-    });
-  });
+
+    tick(1000);
+  }));
 });
