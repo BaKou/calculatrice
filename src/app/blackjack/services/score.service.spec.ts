@@ -252,23 +252,54 @@ describe('ScoreService', () => {
     });
   });
 
-  it('should calculate a player score and update his rank, the rank should be perdu', (done) => {
+  it('should find the winner at the end of the game player lose', fakeAsync(() => {
     jest
       .spyOn(cardsServiceMock, 'getPlayerCards')
-      .mockReturnValueOnce(of(mockPlayerCardsSeven));
+      .mockReturnValueOnce(of(mockPlayerCardsOne));
+    jest
+      .spyOn(cardsServiceMock, 'getBankCards')
+      .mockReturnValueOnce(of(mockPlayerCardsFour));
+    service.getScore('player');
+    service.getScore('bank');
+    tick();
 
+    const result = service.findWinner();
+
+    expect(result).toBe('Vous avez PERDU');
+  }));
+
+  it('should find the winner at the end of the game tie', fakeAsync(() => {
+    jest
+      .spyOn(cardsServiceMock, 'getPlayerCards')
+      .mockReturnValueOnce(of(mockPlayerCardsOne));
+    jest
+      .spyOn(cardsServiceMock, 'getBankCards')
+      .mockReturnValueOnce(of(mockPlayerCardsOne));
+    service.getScore('bank');
+    service.getScore('player');
+    tick();
+
+    const result = service.findWinner();
+
+    expect(result).toBe('EGALITE');
+  }));
+
+  it('sould find the winner at the end of the game player win', fakeAsync(() => {
+    jest
+      .spyOn(cardsServiceMock, 'getPlayerCards')
+      .mockReturnValueOnce(of(mockPlayerCardsTwo));
+    jest
+      .spyOn(cardsServiceMock, 'getBankCards')
+      .mockReturnValueOnce(of(mockPlayerCardsOne));
+    service.getScore('bank');
     service.getScore('player');
 
-    service.playerScore$.subscribe((score) => {
-      expect(score).toEqual(30);
-      service.playerRank$.subscribe((rank) => {
-        expect(rank).toEqual('PERDU');
-        done();
-      });
-    });
-  });
+    const result = service.findWinner();
 
-  it('should calculate a bank score and not a player rank', (done) => {
+    expect(result).toBe('Vous avez GAGNE');
+  }));
+
+  it('should calculate a bank score and not a player rank', fakeAsync(() => {
     jest
       .spyOn(cardsServiceMock, 'getBankCards')
       .mockReturnValueOnce(of(mockPlayerCardsSeven));
@@ -278,6 +309,7 @@ describe('ScoreService', () => {
       .mockReturnValueOnce(of(mockPlayerCardsSeven));
 
     service.getScore('bank');
+    tick();
 
     service.playerScore$.subscribe((score) => {
       expect(score).toEqual(0);
@@ -288,53 +320,6 @@ describe('ScoreService', () => {
 
     service.bankScore$.subscribe((score) => {
       expect(score).toEqual(30);
-      done();
     });
-  });
-
-  it('should find the winner at the end of the game player win', fakeAsync(() => {
-    jest
-      .spyOn(cardsServiceMock, 'getPlayerCards')
-      .mockReturnValueOnce(of(mockPlayerCardsTwo));
-    jest
-      .spyOn(cardsServiceMock, 'getBankCards')
-      .mockReturnValueOnce(of(mockPlayerCardsOne));
-    service.getScore('bank');
-    service.getScore('player');
-
-    tick(1000);
-    const result = service.findWinner();
-
-    expect(result).toBe('Vous avez GAGNE');
   }));
-
-  xit('should find the winner at the end of the game player lose', () => {
-    jest
-      .spyOn(cardsServiceMock, 'getPlayerCards')
-      .mockReturnValueOnce(of(mockPlayerCardsOne));
-    jest
-      .spyOn(cardsServiceMock, 'getBankCards')
-      .mockReturnValueOnce(of(mockPlayerCardsFour));
-    service.getScore('player');
-    service.getScore('bank');
-
-    const result = service.findWinner();
-
-    expect(result).toBe('Vous avez PERDU');
-  });
-
-  xit('should find the winner at the end of the game tie', () => {
-    jest
-      .spyOn(cardsServiceMock, 'getPlayerCards')
-      .mockReturnValueOnce(of(mockPlayerCardsOne));
-    jest
-      .spyOn(cardsServiceMock, 'getBankCards')
-      .mockReturnValueOnce(of(mockPlayerCardsOne));
-    service.getScore('bank');
-    service.getScore('player');
-
-    const result = service.findWinner();
-
-    expect(result).toBe('EGALITE');
-  });
 });

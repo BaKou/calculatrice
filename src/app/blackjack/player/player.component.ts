@@ -7,9 +7,9 @@ import { CardType } from '../types/card.type';
   styleUrls: ['./player.component.scss'],
 })
 export class PlayerComponent implements OnInit {
-  @Input() playerCards: CardType[] = [];
-  @Input() score = 0;
-  @Input() rank? = '';
+  @Input() playerCards: CardType[] | null = [];
+  @Input() score: number | null = 0;
+  @Input() rank?: string | null = '';
   constructor() {}
 
   ngOnInit(): void {}

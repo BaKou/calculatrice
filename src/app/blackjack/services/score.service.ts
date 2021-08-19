@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CardType } from '../types/card.type';
 import { CardsService } from './cards.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -17,27 +17,33 @@ export class ScoreService {
 
   constructor(private cardsService: CardsService) {}
 
-  getPlayerScore(): Observable<number> {
+  public getPlayerScore(): Observable<number> {
     return this.playerScore$;
   }
 
-  getPlayerRank(): Observable<string> {
+  public getPlayerRank(): Observable<string> {
     return this.playerRank$;
   }
 
-  getBankScore(): Observable<number> {
+  public getBankScore(): Observable<number> {
     return this.bankScore$;
   }
 
-  getScore(player: string): void {
+  public getScore(player: string): void {
     if (player === 'bank') {
-      this.cardsService.getBankCards().subscribe((cards) => {
-        this.calculateScore(cards, this._bankScore, false);
-      });
+      this.cardsService.getBankCards().subscribe(
+        (cards) => {
+          this.calculateScore(cards, this._bankScore, false);
+        },
+        (err) => of(0)
+      );
     } else {
-      this.cardsService.getPlayerCards().subscribe((cards) => {
-        this.calculateScore(cards, this._playerScore, true);
-      });
+      this.cardsService.getPlayerCards().subscribe(
+        (cards) => {
+          this.calculateScore(cards, this._playerScore, true);
+        },
+        (err) => of(0)
+      );
     }
   }
 
@@ -49,14 +55,11 @@ export class ScoreService {
     this.temporaryScore = 0;
     cards.forEach((card) => {
       if (card.value !== 'ACE') {
-        console.log(this.temporaryScore);
         if (Number.isInteger(parseInt(card.value, 10))) {
           this.temporaryScore += parseFloat(card.value);
         } else {
           this.temporaryScore += 10;
         }
-
-        console.log(this.temporaryScore);
       }
     });
     this.addAce(cards);
@@ -94,12 +97,9 @@ export class ScoreService {
     }
   }
 
-  findWinner(): string {
+  public findWinner(): string {
     const bankScore = this._bankScore.value;
     const playerScore = this._playerScore.value;
-
-    console.log('b,', this._bankScore.value);
-    console.log('p,', this._playerScore.value);
 
     if (
       (playerScore > bankScore && playerScore < 22) ||

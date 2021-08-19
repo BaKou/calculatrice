@@ -33,15 +33,15 @@ export class TableComponent implements OnInit {
     this.scoreService.getScore('bank');
   }
 
-  startGame(): void {
+  public startGame(): void {
     this.cardsService.initializeGame();
   }
 
-  draw(): void {
+  public draw(): void {
     this.cardsService.drawCard();
   }
 
-  endGame(): void {
+  public endGame(): void {
     this.winner = this.scoreService.findWinner();
   }
 }
